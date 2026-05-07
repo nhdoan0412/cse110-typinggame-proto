@@ -29,6 +29,11 @@
       <section id="game-screen" class="screen game-screen" aria-label="Typing challenge">
         <div class="arena-panel">
           <canvas id="arena" width="960" height="540" aria-label="Runner game arena"></canvas>
+          <div class="race-hud" aria-label="Live race stats">
+            <span id="wpm-label">0 WPM</span>
+            <span id="rival-label">Rival warming up</span>
+            <span id="pace-label">Pace steady</span>
+          </div>
           <div class="mobile-actions" aria-label="Mobile movement controls">
             <button id="jump-button" type="button">Jump</button>
             <button id="dash-button" type="button">Dash</button>
@@ -67,6 +72,9 @@
               <span>Unlocked this run</span>
               <span id="progress-count">0/0</span>
             </div>
+            <div class="race-meter" aria-label="Race progress">
+              <span id="race-meter-fill"></span>
+            </div>
             <div id="unlock-list" class="unlock-list"></div>
           </div>
           <div class="button-row">
@@ -99,6 +107,6 @@
       </button>
     </template>
 
-    <script type="module" src="src/main.js?v=2"></script>
+    <script type="module" src="src/main.js?v=3"></script>
   </body>
 </html>

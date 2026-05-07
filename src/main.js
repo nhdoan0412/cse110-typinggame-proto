@@ -1,6 +1,6 @@
-import { RunnerGame } from "./game.js?v=2";
-import { packs } from "./packs.js?v=2";
-import { getBestRun, saveBestRun } from "./storage.js?v=2";
+import { RunnerGame } from "./game.js?v=3";
+import { packs } from "./packs.js?v=3";
+import { getBestRun, saveBestRun } from "./storage.js?v=3";
 
 const els = {
   screenTitle: document.querySelector("#screen-title"),
@@ -20,7 +20,11 @@ const els = {
   input: document.querySelector("#typing-input"),
   feedback: document.querySelector("#feedback"),
   progressCount: document.querySelector("#progress-count"),
+  raceMeterFill: document.querySelector("#race-meter-fill"),
   unlockList: document.querySelector("#unlock-list"),
+  wpm: document.querySelector("#wpm-label"),
+  rival: document.querySelector("#rival-label"),
+  pace: document.querySelector("#pace-label"),
   skip: document.querySelector("#skip-button"),
   restart: document.querySelector("#restart-button"),
   menu: document.querySelector("#menu-button"),
@@ -43,6 +47,8 @@ const state = {
   streak: 0,
   xp: 0,
   startedAt: 0,
+  roundStartedAt: 0,
+  completedChars: 0,
   completed: 0,
   unlocked: []
 };
@@ -83,6 +89,8 @@ function startPack(pack) {
     streak: 0,
     xp: 0,
     startedAt: performance.now(),
+    roundStartedAt: performance.now(),
+    completedChars: 0,
     completed: 0,
     unlocked: []
   });
@@ -103,10 +111,11 @@ function renderRound() {
   els.feedback.textContent = "Type the target exactly. Fix red characters before moving on.";
   els.feedback.className = "feedback";
   state.typed = "";
+  state.roundStartedAt = performance.now();
   renderTarget();
   renderProgress();
   updateStats();
-  game.setProgress(state.round / state.pack.levels.length);
+  updateRaceTelemetry();
   requestAnimationFrame(() => els.input.focus());
 }
 
@@ -133,7 +142,7 @@ function handleInput() {
   if (validPrefix) {
     state.correctKeys += 1;
     state.streak += 1;
-    els.feedback.textContent = state.typed === target ? "Compiled cleanly." : "Looking good.";
+    els.feedback.textContent = state.typed === target ? "Clean compile. Sprint to the next gate." : getRaceCue();
     els.feedback.className = "feedback good";
   } else {
     state.mistakes += 1;
@@ -144,17 +153,21 @@ function handleInput() {
 
   renderTarget();
   updateStats();
+  updateRaceTelemetry();
   if (state.typed === target) completeRound();
 }
 
 function completeRound() {
   const level = state.pack.levels[state.round];
   state.completed += 1;
+  state.completedChars += level.code.length;
   state.unlocked.push(level.reward);
   state.xp += Math.max(25, 120 - state.mistakes * 8 + state.streak);
   game.reward(level.reward);
-  renderProgress();
   state.round += 1;
+  state.typed = "";
+  renderProgress();
+  updateRaceTelemetry();
   if (state.round >= state.pack.levels.length) {
     setTimeout(finishRun, 550);
     return;
@@ -181,6 +194,7 @@ function finishRun() {
   els.summaryStats.innerHTML = [
     `${run.xp} XP`,
     `${run.accuracy}% accuracy`,
+    `${getWpm()} WPM`,
     `${run.mistakes} mistakes`,
     `${run.seconds}s`
   ]
@@ -198,6 +212,8 @@ function updateStats() {
 function renderProgress() {
   const total = state.pack?.levels.length ?? 0;
   els.progressCount.textContent = `${state.unlocked.length}/${total}`;
+  const raceProgress = Math.round(getOverallProgress() * 100);
+  els.raceMeterFill.style.width = `${raceProgress}%`;
   if (state.unlocked.length === 0) {
     els.unlockList.innerHTML = "<span>Complete a prompt to add your first unlock.</span>";
     return;
@@ -205,6 +221,61 @@ function renderProgress() {
   els.unlockList.innerHTML = state.unlocked
     .map((item) => `<span>${escapeHtml(item)}</span>`)
     .join("");
+}
+
+function updateRaceTelemetry() {
+  const progress = getOverallProgress();
+  const elapsedSeconds = Math.max(0, (performance.now() - state.startedAt) / 1000);
+  const rivalProgress = Math.min(0.98, elapsedSeconds / getTargetRaceSeconds());
+  const wpm = getWpm();
+  const lead = progress - rivalProgress;
+  els.wpm.textContent = `${wpm} WPM`;
+  els.rival.textContent = lead >= 0 ? `Lead ${(lead * 100).toFixed(0)}%` : `Behind ${Math.abs(lead * 100).toFixed(0)}%`;
+  els.pace.textContent = state.streak >= 8 ? "Boost active" : state.mistakes > 0 ? "Repair typos" : "Pace steady";
+  els.raceMeterFill.style.width = `${Math.round(progress * 100)}%`;
+  game.setRaceState({
+    progress,
+    rivalProgress,
+    wpm,
+    combo: state.streak,
+    accuracy: getAccuracy()
+  });
+}
+
+function getRaceCue() {
+  if (state.streak > 0 && state.streak % 12 === 0) return "Combo boost. Your runner is pulling ahead.";
+  if (state.streak > 0 && state.streak % 6 === 0) return "Nice rhythm. Keep the syntax clean.";
+  return "Good pace.";
+}
+
+function getOverallProgress() {
+  if (!state.pack) return 0;
+  const current = state.pack.levels[state.round];
+  const currentCorrect = current ? getMatchingPrefixLength(current.code, state.typed) : 0;
+  const totalChars = state.pack.levels.reduce((sum, level) => sum + level.code.length, 0);
+  return Math.min(1, (state.completedChars + currentCorrect) / totalChars);
+}
+
+function getMatchingPrefixLength(target, typed) {
+  let count = 0;
+  for (let index = 0; index < typed.length && index < target.length; index += 1) {
+    if (typed[index] !== target[index]) break;
+    count += 1;
+  }
+  return count;
+}
+
+function getWpm() {
+  if (!state.startedAt) return 0;
+  const elapsedMinutes = Math.max(1 / 60, (performance.now() - state.startedAt) / 60000);
+  const current = state.pack?.levels[state.round];
+  const currentCorrect = current ? getMatchingPrefixLength(current.code, state.typed) : 0;
+  return Math.round(((state.completedChars + currentCorrect) / 5) / elapsedMinutes);
+}
+
+function getTargetRaceSeconds() {
+  const totalChars = state.pack.levels.reduce((sum, level) => sum + level.code.length, 0);
+  return Math.max(35, totalChars / 5 / 38 * 60);
 }
 
 function getAccuracy() {
@@ -246,7 +317,7 @@ window.addEventListener("keydown", (event) => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js?v=2").catch(() => {});
+  navigator.serviceWorker.register("./service-worker.js?v=3").catch(() => {});
 }
 
 renderPacks();

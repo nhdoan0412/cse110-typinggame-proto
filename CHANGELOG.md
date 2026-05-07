@@ -6,3 +6,4 @@
 - Added three syntax packs, mobile controls, local best-run storage, and offline caching.
 - Added initial process documentation and ADRs.
 - Added in-game learning summaries, typing cues, and run unlock progress.
+- Added TypeRacer-inspired race mechanics with a rival, WPM HUD, finish line, and typing-driven race progress.

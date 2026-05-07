@@ -1,13 +1,13 @@
-const CACHE = "syntax-runner-v2";
+const CACHE = "syntax-runner-v3";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
   "./manifest.webmanifest",
-  "./src/main.js?v=2",
-  "./src/game.js?v=2",
-  "./src/packs.js?v=2",
-  "./src/storage.js?v=2"
+  "./src/main.js?v=3",
+  "./src/game.js?v=3",
+  "./src/packs.js?v=3",
+  "./src/storage.js?v=3"
 ];
 
 self.addEventListener("install", (event) => {
