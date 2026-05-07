@@ -17,6 +17,9 @@ for (const pack of packs) {
     assert.equal(typeof level.concept, "string", `${pack.id} level needs a concept`);
     assert.equal(typeof level.code, "string", `${pack.id} level needs code`);
     assert.ok(level.code.length > 0, `${pack.id} level code cannot be empty`);
+    assert.equal(typeof level.summary, "string", `${pack.id} level needs a player summary`);
+    assert.ok(level.summary.length >= 40, `${pack.id} level summary should be useful`);
+    assert.equal(typeof level.tip, "string", `${pack.id} level needs a typing tip`);
     assert.equal(typeof level.reward, "string", `${pack.id} level needs a reward label`);
   }
 }

@@ -1,6 +1,6 @@
-import { RunnerGame } from "./game.js";
-import { packs } from "./packs.js";
-import { getBestRun, saveBestRun } from "./storage.js";
+import { RunnerGame } from "./game.js?v=2";
+import { packs } from "./packs.js?v=2";
+import { getBestRun, saveBestRun } from "./storage.js?v=2";
 
 const els = {
   screenTitle: document.querySelector("#screen-title"),
@@ -14,9 +14,13 @@ const els = {
   packLabel: document.querySelector("#pack-label"),
   roundLabel: document.querySelector("#round-label"),
   concept: document.querySelector("#concept-label"),
+  summary: document.querySelector("#summary-label"),
+  tip: document.querySelector("#tip-label"),
   target: document.querySelector("#target-code"),
   input: document.querySelector("#typing-input"),
   feedback: document.querySelector("#feedback"),
+  progressCount: document.querySelector("#progress-count"),
+  unlockList: document.querySelector("#unlock-list"),
   skip: document.querySelector("#skip-button"),
   restart: document.querySelector("#restart-button"),
   menu: document.querySelector("#menu-button"),
@@ -39,7 +43,8 @@ const state = {
   streak: 0,
   xp: 0,
   startedAt: 0,
-  completed: 0
+  completed: 0,
+  unlocked: []
 };
 
 const game = new RunnerGame(document.querySelector("#arena"));
@@ -78,7 +83,8 @@ function startPack(pack) {
     streak: 0,
     xp: 0,
     startedAt: performance.now(),
-    completed: 0
+    completed: 0,
+    unlocked: []
   });
   els.screenTitle.textContent = pack.name;
   game.start(pack.theme);
@@ -91,11 +97,14 @@ function renderRound() {
   els.packLabel.textContent = state.pack.name;
   els.roundLabel.textContent = `Round ${state.round + 1} of ${state.pack.levels.length}`;
   els.concept.textContent = level.concept;
+  els.summary.textContent = level.summary;
+  els.tip.textContent = level.tip;
   els.input.value = "";
   els.feedback.textContent = "Type the target exactly. Fix red characters before moving on.";
   els.feedback.className = "feedback";
   state.typed = "";
   renderTarget();
+  renderProgress();
   updateStats();
   game.setProgress(state.round / state.pack.levels.length);
   requestAnimationFrame(() => els.input.focus());
@@ -141,8 +150,10 @@ function handleInput() {
 function completeRound() {
   const level = state.pack.levels[state.round];
   state.completed += 1;
+  state.unlocked.push(level.reward);
   state.xp += Math.max(25, 120 - state.mistakes * 8 + state.streak);
   game.reward(level.reward);
+  renderProgress();
   state.round += 1;
   if (state.round >= state.pack.levels.length) {
     setTimeout(finishRun, 550);
@@ -184,6 +195,18 @@ function updateStats() {
   els.xp.textContent = `XP ${state.xp}`;
 }
 
+function renderProgress() {
+  const total = state.pack?.levels.length ?? 0;
+  els.progressCount.textContent = `${state.unlocked.length}/${total}`;
+  if (state.unlocked.length === 0) {
+    els.unlockList.innerHTML = "<span>Complete a prompt to add your first unlock.</span>";
+    return;
+  }
+  els.unlockList.innerHTML = state.unlocked
+    .map((item) => `<span>${escapeHtml(item)}</span>`)
+    .join("");
+}
+
 function getAccuracy() {
   if (state.totalKeys === 0) return 100;
   return Math.max(0, Math.round((state.correctKeys / state.totalKeys) * 100));
@@ -223,7 +246,7 @@ window.addEventListener("keydown", (event) => {
 });
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+  navigator.serviceWorker.register("./service-worker.js?v=2").catch(() => {});
 }
 
 renderPacks();

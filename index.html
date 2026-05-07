@@ -41,6 +41,16 @@
             <span id="round-label"></span>
           </div>
           <p id="concept-label" class="concept"></p>
+          <section class="lesson-panel" aria-label="Current syntax summary">
+            <div>
+              <span class="lesson-kicker">What it does</span>
+              <p id="summary-label"></p>
+            </div>
+            <div>
+              <span class="lesson-kicker">Typing cue</span>
+              <p id="tip-label"></p>
+            </div>
+          </section>
           <pre id="target-code" class="target-code"></pre>
           <label class="typing-label" for="typing-input">Type the code</label>
           <textarea
@@ -52,6 +62,13 @@
             inputmode="text"
           ></textarea>
           <p id="feedback" class="feedback"></p>
+          <div class="progress-panel" aria-label="Run progress">
+            <div class="progress-header">
+              <span>Unlocked this run</span>
+              <span id="progress-count">0/0</span>
+            </div>
+            <div id="unlock-list" class="unlock-list"></div>
+          </div>
           <div class="button-row">
             <button id="skip-button" type="button">Skip</button>
             <button id="restart-button" type="button">Restart</button>
@@ -82,6 +99,6 @@
       </button>
     </template>
 
-    <script type="module" src="src/main.js"></script>
+    <script type="module" src="src/main.js?v=2"></script>
   </body>
 </html>
