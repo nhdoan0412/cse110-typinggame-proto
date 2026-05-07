@@ -1,0 +1,17 @@
+{
+  "name": "syntax-runner-typing-game",
+  "version": "0.1.0",
+  "description": "A mobile-friendly, offline-capable code typing game prototype for CSE 110.",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 4173",
+    "test": "node tests/pack-schema.test.js",
+    "validate:packs": "node tests/pack-schema.test.js"
+  },
+  "keywords": [
+    "typing-game",
+    "vanilla-js",
+    "cse-110"
+  ],
+  "license": "UNLICENSED"
+}

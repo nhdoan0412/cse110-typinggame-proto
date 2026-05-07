@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111827" />
+    <title>Syntax Runner</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="app" class="shell" aria-live="polite">
+      <section class="topbar" aria-label="Game status">
+        <div>
+          <p class="eyebrow">Syntax Runner</p>
+          <h1 id="screen-title">Choose a syntax pack</h1>
+        </div>
+        <div class="status-strip">
+          <span id="streak-label">Streak 0</span>
+          <span id="accuracy-label">Accuracy 100%</span>
+          <span id="xp-label">XP 0</span>
+        </div>
+      </section>
+
+      <section id="menu-screen" class="screen active" aria-labelledby="screen-title">
+        <div id="pack-grid" class="pack-grid"></div>
+      </section>
+
+      <section id="game-screen" class="screen game-screen" aria-label="Typing challenge">
+        <div class="arena-panel">
+          <canvas id="arena" width="960" height="540" aria-label="Runner game arena"></canvas>
+          <div class="mobile-actions" aria-label="Mobile movement controls">
+            <button id="jump-button" type="button">Jump</button>
+            <button id="dash-button" type="button">Dash</button>
+          </div>
+        </div>
+
+        <aside class="code-panel" aria-label="Current code prompt">
+          <div class="prompt-meta">
+            <span id="pack-label"></span>
+            <span id="round-label"></span>
+          </div>
+          <p id="concept-label" class="concept"></p>
+          <pre id="target-code" class="target-code"></pre>
+          <label class="typing-label" for="typing-input">Type the code</label>
+          <textarea
+            id="typing-input"
+            rows="3"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            inputmode="text"
+          ></textarea>
+          <p id="feedback" class="feedback"></p>
+          <div class="button-row">
+            <button id="skip-button" type="button">Skip</button>
+            <button id="restart-button" type="button">Restart</button>
+            <button id="menu-button" type="button">Packs</button>
+          </div>
+        </aside>
+      </section>
+
+      <section id="summary-screen" class="screen summary-screen" aria-label="Run summary">
+        <div class="summary-card">
+          <p class="eyebrow">Run complete</p>
+          <h2 id="summary-title"></h2>
+          <div id="summary-stats" class="summary-stats"></div>
+          <div class="button-row">
+            <button id="play-again-button" type="button">Play Again</button>
+            <button id="summary-menu-button" type="button">Choose Pack</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <template id="pack-card-template">
+      <button class="pack-card" type="button">
+        <span class="pack-icon"></span>
+        <span class="pack-name"></span>
+        <span class="pack-description"></span>
+        <span class="pack-best"></span>
+      </button>
+    </template>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

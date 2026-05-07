@@ -1,0 +1,351 @@
+:root {
+  color-scheme: light;
+  --ink: #121826;
+  --muted: #667085;
+  --panel: #ffffff;
+  --line: #d9dee7;
+  --field: #f6f7fb;
+  --brand: #0e7490;
+  --brand-strong: #164e63;
+  --accent: #eab308;
+  --danger: #b42318;
+  --success: #15803d;
+  --arena: #101828;
+  --shadow: 0 18px 42px rgb(18 24 38 / 14%);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, rgb(14 116 144 / 8%), transparent 280px),
+    #eef2f6;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--panel);
+  cursor: pointer;
+}
+
+button:hover,
+button:focus-visible {
+  border-color: var(--brand);
+  outline: 3px solid rgb(14 116 144 / 18%);
+}
+
+.shell {
+  width: min(1180px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 22px;
+}
+
+.topbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--brand-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+h1 {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+}
+
+.status-strip,
+.prompt-meta,
+.summary-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-strip span,
+.prompt-meta span,
+.summary-stats span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: rgb(255 255 255 / 74%);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.pack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+}
+
+.pack-card {
+  display: grid;
+  min-height: 190px;
+  padding: 18px;
+  text-align: left;
+  align-content: start;
+  gap: 10px;
+  box-shadow: var(--shadow);
+}
+
+.pack-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--brand);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.pack-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.pack-description {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.pack-best {
+  margin-top: auto;
+  color: var(--brand-strong);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.game-screen.active {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.arena-panel,
+.code-panel,
+.summary-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.arena-panel {
+  overflow: hidden;
+  position: relative;
+  min-height: 360px;
+}
+
+#arena {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  background: var(--arena);
+}
+
+.mobile-actions {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: none;
+  gap: 8px;
+}
+
+.mobile-actions button {
+  min-width: 76px;
+  color: #fff;
+  background: rgb(17 24 39 / 82%);
+  border-color: rgb(255 255 255 / 20%);
+}
+
+.code-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+.concept {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.target-code {
+  min-height: 120px;
+  max-height: 220px;
+  overflow: auto;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #111827;
+  color: #d1d5db;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.target-code .done {
+  color: #86efac;
+}
+
+.target-code .current {
+  color: #111827;
+  background: var(--accent);
+}
+
+.target-code .wrong {
+  color: #fff;
+  background: var(--danger);
+}
+
+.typing-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+#typing-input {
+  width: 100%;
+  min-height: 92px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--field);
+  color: var(--ink);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  line-height: 1.45;
+}
+
+#typing-input:focus {
+  border-color: var(--brand);
+  outline: 3px solid rgb(14 116 144 / 18%);
+}
+
+.feedback {
+  min-height: 24px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.feedback.bad {
+  color: var(--danger);
+}
+
+.feedback.good {
+  color: var(--success);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.button-row button:first-child,
+#play-again-button {
+  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+.summary-screen.active {
+  display: grid;
+  min-height: 58vh;
+  place-items: center;
+}
+
+.summary-card {
+  width: min(580px, 100%);
+  padding: 24px;
+}
+
+.summary-stats {
+  margin: 18px 0;
+}
+
+@media (max-width: 840px) {
+  .shell {
+    padding: 14px;
+  }
+
+  .topbar {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .game-screen.active {
+    grid-template-columns: 1fr;
+  }
+
+  .arena-panel {
+    min-height: 280px;
+  }
+
+  #arena {
+    min-height: 300px;
+  }
+
+  .mobile-actions {
+    display: flex;
+  }
+
+  .code-panel {
+    padding: 14px;
+  }
+}
